@@ -10,12 +10,14 @@
 
 /////////////////////////////////////////////////////////////////////////////
 // CCExtFileTestDlg dialog
+#include "CExtFile.h"
 
 class CCExtFileTestDlg : public CDialog
 {
 // Construction
 public:
 	CCExtFileTestDlg(CWnd* pParent = NULL);	// standard constructor
+	~CCExtFileTestDlg();
 
 // Dialog Data
 	//{{AFX_DATA(CCExtFileTestDlg)
@@ -39,8 +41,15 @@ protected:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
+	afx_msg void OnTimer(UINT nIDEvent);
+	virtual void OnOK();
+	virtual void OnCancel();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+
+private:
+	CExtFile*	m_pFile;
+	int			m_nSeconds;
 };
 
 //{{AFX_INSERT_LOCATION}}

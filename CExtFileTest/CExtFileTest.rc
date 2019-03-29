@@ -92,6 +92,7 @@ FONT 9, "宋体"
 BEGIN
     DEFPUSHBUTTON   "确定",IDOK,80,179,50,14
     PUSHBUTTON      "取消",IDCANCEL,177,179,50,14
+    LTEXT           "",IDC_Info,67,43,190,107
 END
 
 

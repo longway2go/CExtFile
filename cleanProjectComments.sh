@@ -13,6 +13,7 @@ function cleanCommons ()  {
 	rm $filename.bak
 	#删除连续空行，只保留一个空行
 	sed -i -e '/^$/{N;/\n$/D};' $filename
+	sed -i -e '/^$/{N;/\n$/D};' $filename
 }
 
 # 遍历工程目录

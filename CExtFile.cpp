@@ -147,7 +147,7 @@ void CExtFile::Close(){
 			CFile::Remove(csTempPath);
 			m_csSubFile[m_nSubIndex].Empty();
 
-			if(i == 0){
+			if(i == 0 && m_szHeader){
 				outFile.Write(m_szHeader, strlen(m_szHeader));
 				outFile.Write("\r\n------\r\n", strlen("\r\n------\r\n"));
 			}
@@ -168,7 +168,7 @@ void CExtFile::Close(){
 			CFile::Remove(csTempPath);
 			m_csSubFile[i].Empty();
 
-			if(i == 0){
+			if(i == 0 && m_szHeader){
 				outFile.Write(m_szHeader, strlen(m_szHeader));
 				outFile.Write("\r\n------\r\n", strlen("\r\n------\r\n"));
 			}

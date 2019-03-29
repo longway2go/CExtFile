@@ -67,6 +67,20 @@ CCExtFileTestDlg::CCExtFileTestDlg(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 	// Note that LoadIcon does not require a subsequent DestroyIcon in Win32
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+
+	m_pFile = new CExtFile();
+	m_pFile->SetFileSize(10240);
+	m_pFile->Open(".//text.dat", CFile::modeCreate | CFile::modeWrite);
+
+	m_nSeconds = 0;
+}
+
+CCExtFileTestDlg::~CCExtFileTestDlg(){
+	m_pFile->Close();
+	if(m_pFile){
+		delete m_pFile;
+		m_pFile = NULL;
+	}
 }
 
 void CCExtFileTestDlg::DoDataExchange(CDataExchange* pDX)
@@ -82,6 +96,7 @@ BEGIN_MESSAGE_MAP(CCExtFileTestDlg, CDialog)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_WM_TIMER()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -116,6 +131,7 @@ BOOL CCExtFileTestDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 	
 	// TODO: Add extra initialization here
+	SetTimer(1, 1000, NULL);
 	
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -167,4 +183,33 @@ void CCExtFileTestDlg::OnPaint()
 HCURSOR CCExtFileTestDlg::OnQueryDragIcon()
 {
 	return (HCURSOR) m_hIcon;
+}
+
+void CCExtFileTestDlg::OnTimer(UINT nIDEvent) 
+{
+	// TODO: Add your message handler code here and/or call default
+	CString csInfo;
+	csInfo.Format("程序已运行： %d 秒。", ++m_nSeconds);
+	GetDlgItem(IDC_Info)->SetWindowText(csInfo);
+
+	CString csTemp = "测试CExtFile的功能\r\n";
+	m_pFile->Write(csTemp, csTemp.GetLength());
+	
+	CDialog::OnTimer(nIDEvent);
+}
+
+void CCExtFileTestDlg::OnOK() 
+{
+	// TODO: Add extra validation here
+	m_pFile->Close();
+	
+	CDialog::OnOK();
+}
+
+void CCExtFileTestDlg::OnCancel() 
+{
+	// TODO: Add extra cleanup here
+	m_pFile->Close();
+	
+	CDialog::OnCancel();
 }
