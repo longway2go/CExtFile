@@ -1,6 +1,23 @@
 #include "StdAfx.h"
+#include "CExtFile.h"
 #include <math.h>
-#include "Util.h"
+
+/*
+[功能] 删除后缀
+[输入] csIn		文件完整路径
+	   csSuffix	文件后缀名，如：'.dat'
+[输出] CString	返回去掉后缀后的字符串
+*/
+CString RemoveSuffix(const CString csIn, const CString csSuffix){
+	CString csOut;
+
+	int nEnd = csIn.Find(csSuffix);
+	for(int i=0; i<nEnd; i++){
+		csOut += csIn.GetAt(i);
+	}
+
+	return csOut;
+}
 
 CExtFile::CExtFile(){
 	m_csFilePath.Empty();
@@ -18,6 +35,12 @@ CExtFile::CExtFile(){
 	m_szHeader = NULL;
 }
 
+/*
+析构函数：
+	1. 如果子文件没有关闭，则进行关闭。
+	2. 删除素有临时子文件。
+	3. 释放内存。
+*/
 CExtFile::~CExtFile(){
 	for(UINT i=0; i<m_nSubCNT; i++){
 		if(m_bFileOpened){
@@ -45,20 +68,33 @@ BOOL CExtFile::Open(LPCTSTR lpszFileName, UINT nOpenFlags){
 		return FALSE;
 	}
 
+	//计算需要的子文件个数
 	m_nSubCNT = (UINT)ceil(1.0 * m_dwTotalSize / m_dwBlockSize);
+	
+	//保存文件完整路径
 	m_csFilePath = lpszFileName;
+
+	//保存文件创建标识
 	m_nOpenFlags = nOpenFlags;
 
+	//new 子文件路径数组
 	m_csSubFile = new CString[m_nSubCNT];
+
 	m_nSubIndex = 0;
 	m_nSubNo = 0;
 	m_bCycle = FALSE;
 	m_dwActSize = 0;
+	
+	//获取子文件路径，并创建相应的文件打开句柄
 	CString csFilePath = GetSubFilePath();
 	if(!m_File.Open(csFilePath, CFile::modeWrite | CFile::modeCreate)){
 		return FALSE;
 	}
+
+	//设置文件打开标识
 	m_bFileOpened = TRUE;
+
+	//隐藏子文件
 	SetFileAttributes(csFilePath, FILE_ATTRIBUTE_HIDDEN);
 	m_dwNo = 0;
 
@@ -159,6 +195,7 @@ CString CExtFile::GetSubFilePath(){
 	
 	csFilePath += ".dat";
 	
+	//如果写满一个循环，则删除现存所有子文件中最早的那一个，因为其已经没用了。
 	if(m_bCycle)
 	{
 		CFile::Remove(m_csSubFile[m_nSubIndex]);
@@ -170,6 +207,7 @@ CString CExtFile::GetSubFilePath(){
 }
 
 void CExtFile::ChargeFileSize(){
+	//如果块文件写满，则关闭该块文件句柄，并创建并打开新的块文件。
 	if(m_dwActSize >= m_dwBlockSize)
 	{
 		m_File.Close();
