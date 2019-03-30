@@ -48,6 +48,14 @@ public:
 	*/
 	void		SetFileSize(DWORD size);
 
+	/*
+	[功能] 设置缓存大小。
+		   设置缓存之后，会先将流数据放到缓存中。缓存满了再写入到磁盘文件中。这样是为了减少磁盘的写入频率，不用每次数据进来都要执行一次IO写入操作。
+		   需要使用人员自己把握，设置合理的缓存大小。
+	[输入] size:	
+	*/
+	void		SetBufferSize(DWORD size);
+
 private:
 	/*
 	[功能]
@@ -102,5 +110,11 @@ private:
 	
 	//头文件
 	char*		m_szHeader;
+
+	//缓存
+	char*		m_szBuffer;
+	
+	//缓存大小
+	DWORD		m_dwBufferLen;
 };
 

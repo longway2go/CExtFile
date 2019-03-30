@@ -71,6 +71,7 @@ CCExtFileTestDlg::CCExtFileTestDlg(CWnd* pParent /*=NULL*/)
 	m_pFile = new CExtFile();
 	m_pFile->SetFileSize(10240);
 	m_pFile->Open(".//text.dat", CFile::modeCreate | CFile::modeWrite);
+	m_pFile->SetBufferSize(10240);
 
 	m_nSeconds = 0;
 }

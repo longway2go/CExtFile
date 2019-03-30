@@ -33,6 +33,9 @@ CExtFile::CExtFile(){
 	m_bFileOpened = FALSE;
 	m_dwNo = 0;
 	m_szHeader = NULL;
+	SetBufferSize(m_dwBlockSize);
+	m_szBuffer = new char[m_dwBufferLen];
+	memset(m_szBuffer, 0, m_dwBufferLen);
 }
 
 /*
@@ -60,6 +63,11 @@ CExtFile::~CExtFile(){
 	if(m_szHeader != NULL){
 		delete[] m_szHeader;
 		m_szHeader = NULL;
+	}
+
+	if(m_szBuffer){
+		delete[] m_szBuffer;
+		m_szBuffer = NULL;
 	}
 }
 
@@ -109,9 +117,19 @@ void CExtFile::Write(const void* lpBuf, UINT nCount){
 	char szBuf[256];
 	sprintf(szBuf, "%lu,%s,%s", ++m_dwNo, csTime.GetBuffer(csTime.GetLength()), (char*)lpBuf);
 	nCount = strlen(szBuf);
-	m_File.Write(szBuf, nCount);
-	m_dwActSize += nCount;
-	
+
+	//判断是放入缓存，还是写入文件
+	DWORD actBufferLen = strlen(m_szBuffer);
+	if(nCount + actBufferLen >= m_dwBufferLen){
+		m_File.Write(m_szBuffer, actBufferLen);
+		m_File.Write(szBuf, nCount);
+		m_dwActSize += nCount + actBufferLen;
+
+		memset(m_szBuffer, 0, m_dwBufferLen);
+	}else{
+		strcat(m_szBuffer, (char*)szBuf);
+	}
+
 	ChargeFileSize();
 }
 
@@ -234,4 +252,12 @@ void CExtFile::ChargeFileSize(){
 
 void CExtFile::SetFileSize(DWORD size){
 	m_dwTotalSize = size;	
+}
+
+void CExtFile::SetBufferSize(DWORD size){
+	if(size >= m_dwBlockSize){
+		m_dwBufferLen = m_dwBlockSize;
+	}else{
+		m_dwBufferLen = size;
+	}
 }
