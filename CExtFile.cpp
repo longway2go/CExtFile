@@ -121,6 +121,10 @@ void CExtFile::WriteHeader(const void* lpBuf, UINT nCount){
 }
 
 void CExtFile::Close(){
+	if(!m_bFileOpened){
+		return ;
+	}
+
 	m_File.Close();
 	m_bFileOpened = FALSE;
 

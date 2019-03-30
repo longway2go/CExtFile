@@ -76,7 +76,6 @@ CCExtFileTestDlg::CCExtFileTestDlg(CWnd* pParent /*=NULL*/)
 }
 
 CCExtFileTestDlg::~CCExtFileTestDlg(){
-	m_pFile->Close();
 	if(m_pFile){
 		delete m_pFile;
 		m_pFile = NULL;
