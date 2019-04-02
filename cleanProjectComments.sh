@@ -11,9 +11,8 @@ function cleanCommons ()  {
 	#删除/*commnets*/类型的注释，包括多行和单行两种
 	perl -0777 -pi -e 's,/\*.*?\*/,,gs' $filename
 	rm $filename.bak
-	#删除连续空行，只保留一个空行
-	sed -i -e '/^$/{N;/\n$/D};' $filename
-	sed -i -e '/^$/{N;/\n$/D};' $filename
+	#删除所有空行
+	sed -i /^[[:space:]]*$/d $filename
 }
 
 # 遍历工程目录
