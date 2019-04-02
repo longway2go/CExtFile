@@ -143,6 +143,12 @@ void CExtFile::Close(){
 		return ;
 	}
 
+	//关闭前，如果缓存中有数据，则要将缓存数据写入磁盘文件中
+	if(strlen(m_szBuffer)){
+		m_File.Write(m_szBuffer, strlen(m_szBuffer));
+		memset(m_szBuffer, 0, m_dwBufferLen);
+	}
+
 	m_File.Close();
 	m_bFileOpened = FALSE;
 
